@@ -1,0 +1,12 @@
+Package: anetimeseries
+Type: Package
+Title: An Implementation of Functions Used For Time Series Analysis Within A&E
+Version: 0.1.0
+Authors@R: person("Jing", "Jin", email = "jijing@microsoft.com", role = c("aut", "cre"))
+Description: This package contains all the functions commonly used for time series analysis within A&E.
+License: GPL-2
+LazyData: TRUE
+Imports:
+  dygraphs (>= 1.1.1.2),
+  xts (>= 0.9-7)
+RoxygenNote: 6.0.1
