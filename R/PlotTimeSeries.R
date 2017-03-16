@@ -21,7 +21,7 @@
 #' @export
 #' @importFrom xts xts
 #' @importFrom dplyr "%>%"
-#' @import data.table
+#' @importFrom data.table data.table
 #' @import dygraphs
 #'
 PlotTimeSeries <- function(data, timeCol, valCol = "All", main = ""){

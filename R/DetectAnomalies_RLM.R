@@ -64,8 +64,9 @@
 #'  p <- AddShadedRegion(p, result$alert, "red")
 #'  p
 #' @importFrom MASS rlm
-#' @import data.table
-#' @importFrom lubridate hour minute
+#' @importFrom data.table data.table
+#' @importFrom lubridate hour
+#' @importFrom lubridate minute
 #' @export
 #'
 DetectAnomalies_RLM <- function(data, formula, num.train = 1008, prob = 0.9, p.t = 1e-5, degF = 10, min.anom = 3, min.tscore = 10) {
