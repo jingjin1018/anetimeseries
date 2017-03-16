@@ -50,23 +50,23 @@
 #'   \item \code{stdevs} a numeric vector specifying the standard deviation of
 #'   the training residuals at each point; }
 #' @seealso \code{\link[MASS]{rlm}}
-#' @examples
-#'  ProcessorTime <- ProcessorTime$BN2
-#'  QPS <- QueryPerSecond$BN2
-#'  time <- QueryPerSecond$time
-#'  Weekdays <- weekdays(time)
-#'  Hours <- (hour(time) * 60 + minute(time))/20 # in 20-mins interval
-#'  data <- data.frame(ProcessorTime, QPS, Weekdays, Hours)
-#'  result <- DetectAnomalies_RLM(data, ProcessorTime ~ QPS + Weekdays + Hours)
-#'  dt <- data.table(ProcessorTime, time, residuals = result$residuals, stdevs = result$stdevs)
-#'  p <- PlotTimeSeries(dt, "time")
-#'  p <- AddShadedRegion(p, result$warning, "yellow")
-#'  p <- AddShadedRegion(p, result$alert, "red")
-#'  p
 #' @importFrom MASS rlm
 #' @importFrom data.table data.table
 #' @importFrom lubridate hour
 #' @importFrom lubridate minute
+#' @examples
+#'  ProcessorTimeBN2 <- ProcessorTime$BN2
+#'  QPS <- QueryPerSecond$BN2
+#'  time <- QueryPerSecond$time
+#'  Weekdays <- weekdays(time)
+#'  Hours <- (lubridate::hour(time) * 60 + lubridate::minute(time))/20 # in 20-mins interval
+#'  data <- data.frame(ProcessorTimeBN2, QPS, Weekdays, Hours)
+#'  result <- DetectAnomalies_RLM(data, ProcessorTimeBN2 ~ QPS + Weekdays + Hours)
+#'  dt <- data.table::data.table(ProcessorTimeBN2, time, residuals = result$residuals, stdevs = result$stdevs)
+#'  p <- PlotTimeSeries(dt, "time")
+#'  p <- AddShadedRegion(p, result$warning, "yellow")
+#'  p <- AddShadedRegion(p, result$alert, "red")
+#'  p
 #' @export
 #'
 DetectAnomalies_RLM <- function(data, formula, num.train = 1008, prob = 0.9, p.t = 1e-5, degF = 10, min.anom = 3, min.tscore = 10) {

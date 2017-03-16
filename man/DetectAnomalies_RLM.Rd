@@ -69,14 +69,14 @@ The algorithm used in this function is as follows. Define a
   predefined threshold \code{min.tscore}, 2nd-tier alert is fired.
 }
 \examples{
- ProcessorTime <- ProcessorTime$BN2
+ ProcessorTimeBN2 <- ProcessorTime$BN2
  QPS <- QueryPerSecond$BN2
  time <- QueryPerSecond$time
  Weekdays <- weekdays(time)
- Hours <- (hour(time) * 60 + minute(time))/20 # in 20-mins interval
- data <- data.frame(ProcessorTime, QPS, Weekdays, Hours)
- result <- DetectAnomalies_RLM(data, ProcessorTime ~ QPS + Weekdays + Hours)
- dt <- data.table(ProcessorTime, time, residuals = result$residuals, stdevs = result$stdevs)
+ Hours <- (lubridate::hour(time) * 60 + lubridate::minute(time))/20 # in 20-mins interval
+ data <- data.frame(ProcessorTimeBN2, QPS, Weekdays, Hours)
+ result <- DetectAnomalies_RLM(data, ProcessorTimeBN2 ~ QPS + Weekdays + Hours)
+ dt <- data.table::data.table(ProcessorTimeBN2, time, residuals = result$residuals, stdevs = result$stdevs)
  p <- PlotTimeSeries(dt, "time")
  p <- AddShadedRegion(p, result$warning, "yellow")
  p <- AddShadedRegion(p, result$alert, "red")
