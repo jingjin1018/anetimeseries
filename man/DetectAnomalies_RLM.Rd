@@ -43,30 +43,33 @@ The returned value is a list with the following four vectors:
   the training residuals at each point; }
 }
 \description{
-The algorithm used in this function is as follows. Define a
-  moving window of certain length. All the \code{num.train} points fall
-  within this moving window are taken as training set. At each sample time,
-  we first determine whether the response variable of the test point is above
-  the sample quantile corresponds to the probability \code{prob} and
-  calculated using the training set. Only those above the calculated sample
-  quantile are considered as anomaly candidates. \cr For each of those
-  anomaly candiates, construct a robust linear regression model (M estimation
-  with inverse variance weighting) using predictors defined in the
-  \code{formula}. We assume the normalized residual follows t-distribution
-  with certain degrees of freedom \code{degF}. The test point is marked as
-  anomaly if the p-value is smaller than the predifined threshold \code{p.t}.
-  To minimize the effect of anomalies, those marked as anomalies are excluded
-  from the sample quantile calculation and robust linear regression model
-  fitting. \cr We believe that spikes that last for a short period of time
-  are of less concern, therefore, the 1st-tier warnings are fired only when
-  more than \code{min.anom} of past adjacent points are all anomalies. This
-  method successfully decreases the false positive rate by suppressing the
-  amount of warnings for short-time self-healing incident.\cr Two-tiered
-  approach is used to differenciate incidents with different severity. When
-  warning is triggered, the weighted average t-score of all previous adjacent
-  anomalies is calculated according to \eqn{(t[0] + 0.5*t[-1] + 0.5^2*t[-2] +
-  ...)/(1 + 0.5 + 0.5^2 + ...)}. If the weighted average is larger than the
-  predefined threshold \code{min.tscore}, 2nd-tier alert is fired.
+A technique for detecting whether current observation in a
+  multivariate time series is anomaly given all observations up to and
+  including the current time. \cr \cr The algorithm used in this function is as
+  follows. Define a moving window of certain length. All the \code{num.train}
+  points fall within this moving window are taken as training set. At each
+  sample time, we first determine whether the response variable of the test
+  point is above the sample quantile corresponds to the probability
+  \code{prob} and calculated using the training set. Only those above the
+  calculated sample quantile are considered as anomaly candidates. \cr For
+  each of those anomaly candiates, construct a robust linear regression model
+  (M estimation with inverse variance weighting) using predictors defined in
+  the \code{formula}. We assume the normalized residual follows
+  t-distribution with certain degrees of freedom \code{degF}. The test point
+  is marked as anomaly if the p-value is smaller than the predifined
+  threshold \code{p.t}. To minimize the effect of anomalies, those marked as
+  anomalies are excluded from the sample quantile calculation and robust
+  linear regression model fitting. \cr We believe that spikes that last for a
+  short period of time are of less concern, therefore, the 1st-tier warnings
+  are fired only when more than \code{min.anom} of past adjacent points are
+  all anomalies. This method successfully decreases the false positive rate
+  by suppressing the amount of warnings for short-time self-healing
+  incident.\cr Two-tiered approach is used to differenciate incidents with
+  different severity. When warning is triggered, the weighted average t-score
+  of all previous adjacent anomalies is calculated according to \eqn{(t[0] +
+  0.5*t[-1] + 0.5^2*t[-2] + ...)/(1 + 0.5 + 0.5^2 + ...)}. If the weighted
+  average is larger than the predefined threshold \code{min.tscore}, 2nd-tier
+  alert is fired.
 }
 \examples{
  ProcessorTimeBN2 <- ProcessorTime$BN2
