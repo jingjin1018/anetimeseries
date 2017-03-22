@@ -5,7 +5,7 @@
 #'
 #' @param data A data.table containing the time series data.
 #' @param timeCol A string specifies the time column - this column must be of a
-#'   known time-based class.
+#'   known time-based class. If missing, time will be set as starting from "1990-01-01".
 #' @param valCol A vector specifies the value column(s). If missing, all
 #'   non-time columns will be assigned to it.
 #' @param main Main plot title (optional).
@@ -18,16 +18,25 @@
 #' @examples
 #'  PlotTimeSeries(ProcessorTime, "time")
 #'  PlotTimeSeries(ProcessorTime, "time", c("BN2", "CO4"))
+#'  PlotTimeSeries(data.table(x = runif(100)))
 #' @export
 #' @importFrom xts xts
 #' @importFrom dplyr "%>%"
 #' @importFrom data.table data.table
 #' @import dygraphs
 #'
-PlotTimeSeries <- function(data, timeCol, valCol = "All", main = ""){
-  val <- data[, !timeCol, with = FALSE]
+
+PlotTimeSeries <- function(data, timeCol = NULL, valCol = "All", main = ""){
+  time <- as.Date("1990-01-01") + c(1:dim(data)[1])
+  if(is.null(timeCol)){
+    data$Time <- time
+    timeCol <- "Time"
+  }
   if (any(valCol != "All")){
     val <- data[, valCol, with = FALSE]
+    if (!all(valCol %in% colnames(data))) stop("Error: some of the value columns doens't exist in data")
+  } else {
+    val <- data[, !timeCol, with = FALSE]
   }
   if(!all(sapply(val, is.numeric))){
     stop("Error: not all value columns are numeric")

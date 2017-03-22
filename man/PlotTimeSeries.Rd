@@ -4,13 +4,13 @@
 \alias{PlotTimeSeries}
 \title{Create interactive plot for selected time series}
 \usage{
-PlotTimeSeries(data, timeCol, valCol = "All", main = "")
+PlotTimeSeries(data, timeCol = NULL, valCol = "All", main = "")
 }
 \arguments{
 \item{data}{A data.table containing the time series data.}
 
 \item{timeCol}{A string specifies the time column - this column must be of a
-known time-based class.}
+known time-based class. If missing, time will be set as starting from "1990-01-01".}
 
 \item{valCol}{A vector specifies the value column(s). If missing, all
 non-time columns will be assigned to it.}
@@ -28,6 +28,7 @@ Constructor function for creating an interactive plot for
 \examples{
  PlotTimeSeries(ProcessorTime, "time")
  PlotTimeSeries(ProcessorTime, "time", c("BN2", "CO4"))
+ PlotTimeSeries(data.table(x = runif(100)))
 }
 \seealso{
 \code{\link[dygraphs]{dygraph}}
