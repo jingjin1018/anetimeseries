@@ -10,15 +10,16 @@
 QueryPerSecond
 }
 \description{
-The data was extracted from Perf Counter Data in Cosmos for three
-  clusters, i.e. \emph{BN2}, \emph{CH1B}, \emph{CO4}. It spans from \emph{2015-10-21} to
-  \emph{2016-10-21} and gives the measurements in count of the variable
-  \emph{web answer request queries per second}.
+The data was extracted from Perf Counter Data in Cosmos for
+  three clusters, i.e. \emph{BN2}, \emph{CH1B}, \emph{CO4}. It spans from
+  \emph{2015-10-21} to \emph{2016-10-21} and gives the measurements in count
+  of the variable \emph{web answer request queries per second}.
 }
 \examples{
 QueryPerSecond
 }
 \references{
-\href{http://sharepoint/sites/autopilot/default.aspx}{Perf Counter Data in Cosmos}
+\href{http://sharepoint/sites/autopilot/default.aspx}{Perf
+  Counter Data in Cosmos}
 }
 \keyword{datasets}
