@@ -42,8 +42,7 @@ A technique for detecting both past and current anomalies in an
 }
 \examples{
 data <- SessionSuccessRate
-data$seasadj <- seasadj(stl(ts(data$Value, frequency = 7), s.window = 7, t.window = 14))
-p1 <- PlotTimeSeries(as.data.table(data), "Day", c("Value", "seasadj"))
+p1 <- PlotTimeSeries(as.data.table(data), "Day", c("Value"))
 anomalies <- DetectAnomalies_FLAM(data$Value, 7, time = data$Day)
 p1 <- AddShadedRegion(p1, c(1:dim(data)[1]) \%in\% anomalies$change.points, color = "red")
 p1 <- AddShadedRegion(p1, c(1:dim(data)[1]) \%in\% anomalies$anomaly.points, color = "blue")

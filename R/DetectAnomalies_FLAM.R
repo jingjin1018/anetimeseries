@@ -39,7 +39,6 @@
 #' p1
 #'
 #' @import flam
-#' @importFrom forecast seasadj
 #' @importFrom AnomalyDetection AnomalyDetectionVec
 #' @export
 #'
