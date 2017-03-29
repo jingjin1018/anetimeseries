@@ -4,11 +4,12 @@
 \alias{DetectAnomalies_RLM}
 \title{Tiered Anomaly Detection using Robust Linear Regression}
 \usage{
-DetectAnomalies_RLM(data, formula, num.train = 1008, prob = 0.9,
-  p.t = 1e-05, degF = 10, min.anom = 3, min.tscore = 10)
+DetectAnomalies_RLM(data, formula, num.train = 1008, prob = c(0.1, 0.9),
+  direction = "both", min.anom = 3, min.score = 10, p = 0.01,
+  dist = "normal", ...)
 }
 \arguments{
-\item{data}{data frame from which variables specified in \code{formula} are
+\item{data}{data.frame from which variables specified in \code{formula} are
 preferentially to be taken.}
 
 \item{formula}{a robust linear regression formula of the form \code{response
@@ -18,58 +19,70 @@ preferentially to be taken.}
 
 \item{prob}{probability threshold with values in \emph{[0, 1]}. Each test
 point is compared with the sample quantile calculated using this
-probability. Only those above the sample quantile are considered as an
-anomaly candidates.}
+probability. Depends on the \code{direction}, if \itemize{\item
+\code{direction = "pos"} \code{prob} should be a numeric value. Only those
+above the sample quantile are considered as anomaly candidates; \item
+\code{direction = "neg"} \code{prob} should be a numeric value. Only those
+below the sample quantile are considered as anomaly candidates; \item
+\code{direction = "both"} \code{prob} should be a numeric vector of two
+values in \emph{[0, 1]}. Only those outside of the calculated quantile
+range are considered as anomaly candidates}.}
 
-\item{p.t}{p-value threshold with values in \emph{[0, 1]}.}
-
-\item{degF}{degrees of freedom (>0, maybe non-integer), which determines the
-particular form of t-distribution used to fit the residuals.}
+\item{direction}{Directionality of the anomalies to be deteted. Options are:
+\emph{'pos'}, \emph{'neg'} and \emph{'both'}. Defaults to be \emph{'pos'}.}
 
 \item{min.anom}{the minimum number of adjacent anomolies detected previously
 to fire the 1st-tier warning about current point.}
 
-\item{min.tscore}{the minimum weighted average t-score required to fire the
-2nd-tier alert about current point}
+\item{min.score}{the minimum weighted average score required to fire the
+2nd-tier alert}
+
+\item{p}{p-value threshold with values in \emph{[0, 1]}.}
+
+\item{dist}{A string specifies the distribution to fit. Options are
+t-distribution(default: \code{dist = "t"}), normal distribution(\code{dist
+= "normal"}). If t-distribution is selected, remember to pass in parameter
+\code{degrees of freedom, i.e. df}}
 }
 \value{
-The returned value is a list with the following four vectors:
-  \itemize{ \item \code{alert} a logical vector specifying whether points at
-  current index should fire the 1st-tier alert; \item \code{warning} a
-  logical vector specifying whether points at current index should fire the
-  2nd-tier warning; \item \code{residuals} a numeric vector specifying the
-  residuals predicted using robust linear regression models at each point;
-  \item \code{stdevs} a numeric vector specifying the standard deviation of
-  the training residuals at each point; }
+The returned value is a list with the following five items: \itemize{
+  \item \code{alert} a logical vector specifying whether points at current
+  index should fire the 1st-tier alert; \item \code{warning} a logical vector
+  specifying whether points at current index should fire the 2nd-tier
+  warning; \item \code{residuals} a numeric vector specifying the residuals
+  predicted using robust linear regression models at each point; \item
+  \code{mads} a numeric vector specifying the mean absolute deviation of the
+  training residuals at each point; \item \code{hists} a list of static
+  plots, each of which contains histogram of training points overlaid with
+  stats function used to fit}
 }
 \description{
 A technique for detecting whether current observation in a
   multivariate time series is anomaly given all observations up to and
-  including the current time. \cr \cr The algorithm used in this function is as
-  follows. Define a moving window of certain length. All the \code{num.train}
-  points fall within this moving window are taken as training set. At each
-  sample time, we first determine whether the response variable of the test
-  point is above the sample quantile corresponds to the probability
-  \code{prob} and calculated using the training set. Only those above the
-  calculated sample quantile are considered as anomaly candidates. \cr For
-  each of those anomaly candiates, construct a robust linear regression model
-  (M estimation with inverse variance weighting) using predictors defined in
-  the \code{formula}. We assume the normalized residual follows
-  t-distribution with certain degrees of freedom \code{degF}. The test point
-  is marked as anomaly if the p-value is smaller than the predifined
-  threshold \code{p.t}. To minimize the effect of anomalies, those marked as
-  anomalies are excluded from the sample quantile calculation and robust
-  linear regression model fitting. \cr We believe that spikes that last for a
-  short period of time are of less concern, therefore, the 1st-tier warnings
-  are fired only when more than \code{min.anom} of past adjacent points are
-  all anomalies. This method successfully decreases the false positive rate
-  by suppressing the amount of warnings for short-time self-healing
-  incident.\cr Two-tiered approach is used to differenciate incidents with
-  different severity. When warning is triggered, the weighted average t-score
-  of all previous adjacent anomalies is calculated according to \eqn{(t[0] +
-  0.5*t[-1] + 0.5^2*t[-2] + ...)/(1 + 0.5 + 0.5^2 + ...)}. If the weighted
-  average is larger than the predefined threshold \code{min.tscore}, 2nd-tier
-  alert is fired.
+  including the current time. \cr \cr The algorithm used in this function is
+  as follows. Define a moving window of certain length. All the
+  \code{num.train} points fall within this moving window are taken as
+  training set. At each sample time, we first determine whether the response
+  variable of the test point is above the sample quantile corresponds to the
+  probability \code{prob} and calculated using the training set. Only those
+  above the calculated sample quantile are considered as anomaly candidates.
+  \cr For each of those anomaly candiates, construct a robust linear
+  regression model (M estimation with inverse variance weighting) using
+  predictors defined in the \code{formula}. We assume the normalized residual
+  follows \code{dist} distribution. The test point is marked as anomaly if
+  the p-value is smaller than the predifined threshold \code{p}. To minimize
+  the effect of anomalies, those marked as anomalies are excluded from the
+  sample quantile calculation and robust linear regression model fitting. \cr
+  We believe that spikes that last for a short period of time are of less
+  concern, therefore, the 1st-tier warnings are fired only when more than
+  \code{min.anom} of past adjacent points are all anomalies. This method
+  successfully decreases the false positive rate by suppressing the amount of
+  warnings for short-time self-healing incident.\cr Two-tiered approach is
+  used to differenciate incidents with different severity. When warning is
+  triggered, the weighted average score of all previous adjacent anomalies is
+  calculated according to \eqn{(s[0] + 0.5*s[-1] + 0.5^2*s[-2] + ...)/(1 +
+  0.5 + 0.5^2 + ...)}. If the weighted average is larger than the predefined
+  threshold \code{min.score}, 2nd-tier alert is fired.
 }
 \examples{
  ProcessorTimeBN2 <- ProcessorTime$BN2
@@ -79,11 +92,21 @@ A technique for detecting whether current observation in a
  Hours <- (lubridate::hour(time) * 60 + lubridate::minute(time))/20 # in 20-mins interval
  data <- data.frame(ProcessorTimeBN2, QPS, Weekdays, Hours)
  result <- DetectAnomalies_RLM(data, ProcessorTimeBN2 ~ QPS + Weekdays + Hours)
- dt <- data.table::data.table(ProcessorTimeBN2, time, residuals = result$residuals, stdevs = result$stdevs)
+ dt <- data.table::data.table(ProcessorTimeBN2, time, residuals = result$residuals, mads = result$mads)
  p <- PlotTimeSeries(dt, "time")
  p <- AddShadedRegion(p, result$warning, "yellow")
  p <- AddShadedRegion(p, result$alert, "red")
  p
+ result$hists[[21860]]
+
+ result <- DetectAnomalies_RLM(data, ProcessorTimeBN2 ~ QPS + Weekdays + Hours, prob = 0.9, direction = "pos", p = 1e-5, dist = "t", df = 10)
+ dt <- data.table::data.table(ProcessorTimeBN2, time, residuals = result$residuals, mads = result$mads)
+ p <- PlotTimeSeries(dt, "time")
+ p <- AddShadedRegion(p, result$warning, "yellow")
+ p <- AddShadedRegion(p, result$alert, "red")
+ p
+ result$hists[[21860]]
+
 }
 \seealso{
 \code{\link[MASS]{rlm}}

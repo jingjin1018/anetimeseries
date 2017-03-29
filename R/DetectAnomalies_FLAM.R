@@ -13,7 +13,7 @@
 #'   the window size is large than 2 periods, detect anomalies within the window
 #'   by applying the \code{\link[AnomalyDetection]{AnomalyDetectionVec}}
 #'   function provided by twitter. Otherwise, mark all the observations that
-#'   deviate from the median by more than 1.96 Median Absolute Deviation (MAD)
+#'   deviate from the median by more than 2.58 Median Absolute Deviation (MAD)
 #'   as anomalies.}
 #'
 #' @param data A numeric vector containing values observed at times specified in
@@ -58,7 +58,7 @@ DetectAnomalies_FLAM <- function(data, period, time = NULL, max_anoms = 0.03, di
   flam.signal <- flam.out$theta.hat.list[[1]][, 1]
 
   remainder <- fit$time.series[, c("remainder")]
-  sigma <- sd(remainder)
+  sigma <- mad(remainder)
   minDiff <- signif(sigma, 1)
   merged.signal <- MergeLevels(flam.signal, minDiff)
 
@@ -76,8 +76,8 @@ DetectAnomalies_FLAM <- function(data, period, time = NULL, max_anoms = 0.03, di
       result <- AnomalyDetectionVec(subSignal, max_anoms = max_anoms, period = period, longterm_period = length(subSignal), direction = direction)
       subAnomalies <- result$anoms$index
     } else {
-      residual <- subSignal - median(subSignal)
-      subAnomalies <- which(residual < -1.96*mad(residual) | residual > 1.96*mad(residual))
+      score <- abs(subSignal - median(subSignal))/mad(subSignal)
+      subAnomalies <- which(score > 2.58)
     }
     anomaly.points <- c(anomaly.points, subAnomalies + start[i] - 1)
   }

@@ -20,6 +20,7 @@
 #'
 MergeLevels <- function(signal, minDiff) {
   DecimalPlaces <- nchar(strsplit(as.character(minDiff), "\\.")[[1]][2])
+  if(is.na(DecimalPlaces)) DecimalPlaces = 3
   signal <- round(signal, DecimalPlaces)
   while(TRUE){
     ContingencyTable <- as.data.frame(table(signal), stringsAsFactors = FALSE)

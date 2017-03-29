@@ -37,12 +37,12 @@ A technique for detecting both past and current anomalies in an
   the window size is large than 2 periods, detect anomalies within the window
   by applying the \code{\link[AnomalyDetection]{AnomalyDetectionVec}}
   function provided by twitter. Otherwise, mark all the observations that
-  deviate from the median by more than 1.96 Median Absolute Deviation (MAD)
+  deviate from the median by more than 2.58 Median Absolute Deviation (MAD)
   as anomalies.}
 }
 \examples{
 data <- SessionSuccessRate
-p1 <- PlotTimeSeries(as.data.table(data), "Day", c("Value"))
+p1 <- PlotTimeSeries(data, "Day", c("Value"))
 anomalies <- DetectAnomalies_FLAM(data$Value, 7, time = data$Day)
 p1 <- AddShadedRegion(p1, c(1:dim(data)[1]) \%in\% anomalies$change.points, color = "red")
 p1 <- AddShadedRegion(p1, c(1:dim(data)[1]) \%in\% anomalies$anomaly.points, color = "blue")
